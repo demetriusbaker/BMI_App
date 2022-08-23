@@ -1,6 +1,7 @@
 import 'package:bmi_app/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:bmi_app/result_screen.dart';
 
 void main() => runApp(const MyApp());
 
@@ -31,8 +32,8 @@ class InputPage extends StatefulWidget {
 class _InputPageState extends State<InputPage> {
   Gender? gender;
   int age = 20;
-  int height = 150;
-  int weight = 0;
+  int height = 170;
+  int weight = 70;
 
   @override
   Widget build(BuildContext context) {
@@ -65,83 +66,104 @@ class _InputPageState extends State<InputPage> {
               ],
             ),
           ),
+          const SizedBox(height: 20),
+          GestureDetector(
+            onTap: () => openResultScreen(),
+            child: Container(
+              height: 80,
+              color: kBottomContainerColor,
+              child: const Center(
+                  child: Text(
+                "CALCULATE MY BMI",
+                style: kLargeButtonTextStyle,
+              )),
+            ),
+          )
         ],
       ),
     );
   }
 
-  Expanded initGenderImage(Gender sex, String text) => Expanded(
-          child: ReusableCard(
-        onTap: () => setState(() {
-          gender = sex;
-        }),
-        color: gender == sex ? kActiveCardColor : kInactiveCardColor,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(FontAwesomeIcons.mars, size: 100),
-            const SizedBox(
-              height: 20,
-            ),
-            Text(
-              text,
-              style: kBodyTextStyle,
-            )
-          ],
-        ),
-      ));
+  Expanded initGenderImage(Gender sex, String text) {
+    IconData iconData =
+        sex == Gender.male ? FontAwesomeIcons.mars : FontAwesomeIcons.venus;
+    return Expanded(
+        child: ReusableCard(
+      onTap: () => setState(() {
+        gender = sex;
+      }),
+      color: gender == sex ? kActiveCardColor : kInactiveCardColor,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(iconData, size: 100),
+          const SizedBox(
+            height: 20,
+          ),
+          Text(
+            text,
+            style: kBodyTextStyle,
+          )
+        ],
+      ),
+    ));
+  }
 
-  Column initHeightImage() => Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Text(
-              'HEIGHT',
-              style: kBodyTextStyle,
-            ),
-            Text("${height.toString()} cm", style: kNumberTextStyle),
-            Slider(
-                min: 130,
-                max: 220,
-                activeColor: kBottomContainerColor,
-                value: height.toDouble(),
-                onChanged: (value) => setState(() {
-                      height = value.round();
-                    }))
-          ]);
+  Column initHeightImage() {
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Text(
+            'HEIGHT',
+            style: kBodyTextStyle,
+          ),
+          Text("${height.toString()} cm", style: kNumberTextStyle),
+          Slider(
+              min: 130,
+              max: 230,
+              activeColor: kBottomContainerColor,
+              value: height.toDouble(),
+              onChanged: (value) => setState(() {
+                    height = value.round();
+                  }))
+        ]);
+  }
 
-  Expanded initParamImage(String text, Action action1, Action action2) =>
-      Expanded(
-          child: ReusableCard(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              text,
-              style: kBodyTextStyle,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Text(
-              weight.toString(),
-              style: kNumberTextStyle,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                initButton(action1, FontAwesomeIcons.plus),
-                const SizedBox(width: 5),
-                initButton(action2, FontAwesomeIcons.minus),
-              ],
-            )
-          ],
-        ),
-      ));
+  Expanded initParamImage(String text, Action action1, Action action2) {
+    return Expanded(
+        child: ReusableCard(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            text,
+            style: kBodyTextStyle,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Text(
+            text == 'AGE' ? age.toString() : weight.toString(),
+            style: kNumberTextStyle,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              initButton(action1, FontAwesomeIcons.plus),
+              const SizedBox(width: 5),
+              initButton(action2, FontAwesomeIcons.minus),
+            ],
+          )
+        ],
+      ),
+    ));
+  }
 
-  RawMaterialButton initButton(Action action, IconData icon) =>
-      RawMaterialButton(
-        onPressed: () {
+  RawMaterialButton initButton(Action action, IconData icon) {
+    return RawMaterialButton(
+      onPressed: () {
+        setState(() {
           switch (action) {
             case Action.plusWeight:
               increaseWeight();
@@ -156,28 +178,48 @@ class _InputPageState extends State<InputPage> {
               decreaseAge();
               break;
           }
-        },
-        shape: const CircleBorder(),
-        fillColor: kSmallButtonColor,
-        elevation: 10,
-        padding: const EdgeInsets.all(5),
-        child: Icon(icon),
-      );
+        });
+      },
+      shape: const CircleBorder(),
+      fillColor: kSmallButtonColor,
+      elevation: 10,
+      padding: const EdgeInsets.all(5),
+      child: Icon(icon),
+    );
+  }
 
   void increaseWeight() {
-    setState(() => weight++);
+    if (weight >= maximumWeight) return;
+    weight++;
   }
 
   void decreaseWeight() {
-    setState(() => weight--);
+    if (weight <= minimalWeight) return;
+    weight--;
   }
 
   void increaseAge() {
-    setState(() => age++);
+    if (age >= maximumAge) return;
+    age++;
   }
 
   void decreaseAge() {
-    setState(() => age--);
+    if (age <= minimalAge) return;
+    age--;
+  }
+
+  void openResultScreen() {
+    gender ??= Gender.male;
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ResultPage(
+                  gender: gender,
+                  weight: weight,
+                  age: age,
+                  height: height,
+                )));
   }
 }
 

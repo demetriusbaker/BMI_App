@@ -1,8 +1,8 @@
 import 'dart:math';
 
-import 'package:bmi_app/main.dart';
 import 'package:flutter/material.dart';
 import 'constants.dart';
+import 'main.dart';
 
 class ResultPage extends StatelessWidget {
   late Gender? gender;

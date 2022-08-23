@@ -1,7 +1,8 @@
-import 'package:bmi_app/constants.dart';
+import 'package:bmi/result_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:bmi_app/result_screen.dart';
+
+import 'constants.dart';
 
 void main() => runApp(const MyApp());
 

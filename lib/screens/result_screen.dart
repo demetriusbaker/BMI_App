@@ -1,9 +1,10 @@
 import 'dart:math';
-
+import 'package:bmi/tools/gender.dart';
 import 'package:flutter/material.dart';
-import 'constants.dart';
-import 'main.dart';
+import '../tools/constants.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+// ignore: must_be_immutable
 class ResultPage extends StatelessWidget {
   late Gender? gender;
   late int age;
@@ -24,11 +25,13 @@ class ResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var local = AppLocalizations.of(context);
     return Scaffold(
         backgroundColor: kBackground,
         appBar: AppBar(
           backgroundColor: kBackground,
-          title: const Text(appName, style: kBodyTextStyle),
+          title: Text(AppLocalizations.of(context)?.title ?? '',
+              style: kBodyTextStyle),
         ),
         body: Center(
           child: Column(
@@ -37,13 +40,14 @@ class ResultPage extends StatelessWidget {
               Column(
                 children: [
                   const SizedBox(height: 180),
-                  const Text("Your BMI IS", style: kResultTextStyle),
+                  Text(local?.bmi ?? '', style: kResultTextStyle),
                   const SizedBox(height: 30),
                   Text(_bmi.toStringAsFixed(2), style: kBMITextStyle),
                   const SizedBox(height: 35),
-                  Text(_weightLevel(), style: levelColorStyle),
+                  Text(_weightLevel(local), style: levelColorStyle),
                   const SizedBox(height: 25),
-                  Text(_optimalBMI(), style: kOptimalBMIStyle),
+                  Text(_optimalBMI(local?.optimalBMI ?? ''),
+                      style: kOptimalBMIStyle),
                 ],
               ),
               Align(
@@ -53,9 +57,9 @@ class ResultPage extends StatelessWidget {
                   child: Container(
                       height: 80,
                       color: kBottomContainerColor,
-                      child: const Center(
+                      child: Center(
                         child:
-                            Text("RECALCULATE MY BMI", style: kLabelTextStyle),
+                            Text(local?.recalc ?? '', style: kLabelTextStyle),
                       )),
                 ),
               )
@@ -64,31 +68,31 @@ class ResultPage extends StatelessWidget {
         ));
   }
 
-  String _weightLevel() {
+  String _weightLevel(AppLocalizations? local) {
     int cof = gender == Gender.male ? 1 : 0;
 
     String weightLevel;
     if (_bmi >= 35.0 + cof) {
-      weightLevel = "sereve obesity";
+      weightLevel = local?.weightL1 ?? '';
       levelColorStyle = kWeightLevel5Style;
     } else if (_bmi >= 30.0 + cof) {
-      weightLevel = "obesity";
+      weightLevel = local?.weightL2 ?? '';
       levelColorStyle = kWeightLevel4Style;
     } else if (_bmi >= 25.0 + cof) {
-      weightLevel = "overweight";
+      weightLevel = local?.weightL3 ?? '';
       levelColorStyle = kWeightLevel3Style;
     } else if (_bmi >= 18.5 + cof) {
-      weightLevel = "normal weight";
+      weightLevel = local?.weightL4 ?? '';
       levelColorStyle = kWeightLevel2Style;
     } else {
-      weightLevel = "underweight";
+      weightLevel = local?.weightL5 ?? '';
       levelColorStyle = kWeightLevel1Style;
     }
 
     return weightLevel;
   }
 
-  String _optimalBMI() {
+  String _optimalBMI(String message) {
     String optimalBMI;
     if (age < 19) {
       optimalBMI = "18-23";
@@ -105,6 +109,6 @@ class ResultPage extends StatelessWidget {
     } else {
       optimalBMI = "24-29";
     }
-    return "Optimal bmi for $age years old: $optimalBMI kg/m2";
+    return "$message: $optimalBMI kg/m2";
   }
 }

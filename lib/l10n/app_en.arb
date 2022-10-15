@@ -1,0 +1,17 @@
+{
+    "title": "BMI calculator",
+    "male": "MALE",
+    "female": "FEMALE",
+    "height": "HEIGHT",
+    "age": "AGE",
+    "weight": "WEIGHT",
+    "calc": "CALCULATE MY BMI",
+    "bmi": "Your BMI IS",
+    "recalc": "RECALCULATE MY BMI",
+    "weightL1": "severe obesity",
+    "weightL2": "obesity",
+    "weightL3": "overweight",
+    "weightL4": "normal weight",
+    "weightL5": "underweight",
+    "optimalBMI": "Optimal bmi for your age"
+}

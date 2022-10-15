@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-const String appName = "BMI calculator";
-
 const int minimalWeight = 10;
 const int maximumWeight = 200;
 const int minimalAge = 16;
